@@ -22,13 +22,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.jarroyo.composekmpgraphql.model.UIHomeState
 import com.jarroyo.composekmpgraphql.ui.NetworkImage
 import com.jarroyo.composekmpgraphql.viewmodel.HomeViewModel
 import com.jarroyo.sharedcodeclient.domain.model.CharacterUIModel
 
 @Composable
 fun HomeComposable(homeViewModel: HomeViewModel, onClick: (CharacterUIModel) -> Unit = {}) {
-    val dataList: List<CharacterUIModel>? by homeViewModel.dataState.observeAsState()
+    val uiHomeState: UIHomeState? by homeViewModel.homeState.observeAsState()
 
     Scaffold(
         topBar = {
@@ -46,7 +47,7 @@ fun HomeComposable(homeViewModel: HomeViewModel, onClick: (CharacterUIModel) -> 
             )
         },
         content = {
-            HomeScreenContent(homeViewModel, dataList, onClick)
+            HomeScreenContent(homeViewModel, uiHomeState, onClick)
         },
         //bottomBar = {
         //    BottomBreedNavigation()
@@ -55,7 +56,7 @@ fun HomeComposable(homeViewModel: HomeViewModel, onClick: (CharacterUIModel) -> 
 }
 
 @Composable
-fun HomeScreenContent(homeViewModel: HomeViewModel, dataList: List<CharacterUIModel>?, onClick: (CharacterUIModel) -> Unit = {}) {
+fun HomeScreenContent(homeViewModel: HomeViewModel, uiHomeState: UIHomeState?, onClick: (CharacterUIModel) -> Unit = {}) {
     Column(
         modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 10.dp, bottom = 10.dp),
         horizontalAlignment = Alignment.Start
@@ -63,7 +64,14 @@ fun HomeScreenContent(homeViewModel: HomeViewModel, dataList: List<CharacterUIMo
         Spacer(modifier = Modifier.height(10.dp))
         SearchBox(homeViewModel = homeViewModel)
         Spacer(modifier = Modifier.height(10.dp))
-        BreedsList(dataList, onClick)
+        when(uiHomeState) {
+            is UIHomeState.ShowData -> {
+                BreedsList(uiHomeState.homeData, onClick)
+            }
+            is UIHomeState.Error -> {
+                Text("Something goes wrong")
+            }
+        }
     }
 }
 

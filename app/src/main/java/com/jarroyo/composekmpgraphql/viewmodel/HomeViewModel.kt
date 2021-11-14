@@ -30,14 +30,6 @@ class HomeViewModel @ViewModelInject constructor(
             return _homeState
         }
 
-    private var _dataState = MutableLiveData<List<CharacterUIModel>>()
-    val dataState: LiveData<List<CharacterUIModel>>
-        get() {
-            if (_dataState.value == null) getHomeData()
-            return _dataState
-        }
-
-
     fun getHomeData() = viewModelScope.launch {
         _homeState.value = UIHomeState.ShowLoading
 
@@ -45,10 +37,8 @@ class HomeViewModel @ViewModelInject constructor(
             {
                 _homeState.value = UIHomeState.HideLoading
                 _homeState.value = UIHomeState.Error(it)
-                _dataState.value = emptyList()
             },
             { list ->
-                _dataState.value = list
                 _homeState.value = UIHomeState.HideLoading
                 if (list.isNullOrEmpty()) {
                     _homeState.value = UIHomeState.NoContents

@@ -19,11 +19,10 @@ class NetworkDataSourceImpl(private val apolloAPI: ApolloAPI,
     }
 
     override suspend fun getHomeData(): Either<Exception, List<CharacterUIModel>?> {
-        //return if (networkSystem.isNetworkAvailable()) {
-            return apolloAPI.getHomeData()
-            //return Either.Right(listOf(CharacterUIModel("id", "name", "image")))
-        /*} else {
+        return try {
+            apolloAPI.getHomeData()
+        } catch (e: Exception) {
             Either.Left(NetworkErrorException())
-        }*/
+        }
     }
 }
